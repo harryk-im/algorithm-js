@@ -129,3 +129,30 @@ function solution(numbers, target) {
 
   return answer;
 }
+
+/**
+ * 26.04.03
+ * 오랜만에 풀이를 해보는데 여전히 재귀 함수로 한다는게 좀 어색하다.
+ * 복습한 내용을 바탕으로 한다면 당연히 stack을 활용해야 하는게 아닌가 하는 생각.
+ */
+function solution(numbers, target) {
+  let answer = 0;
+
+  const dfs = (acc, idx) => {
+    if (idx === numbers.length) {
+      if (acc !== target) return;
+
+      answer += 1;
+      return;
+    }
+
+    const node = numbers[idx];
+
+    dfs(acc + node, idx + 1)
+    dfs(acc - node, idx + 1)
+  }
+
+  dfs(0, 0)
+
+  return answer
+}
