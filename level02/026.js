@@ -147,3 +147,174 @@ function solution(bridge_length, weight, truck_weights) {
 
   return time;
 }
+
+// 복습
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+  }
+
+  enqueue(value) {
+    const newNode = new Node(value);
+
+    if (this.head === null) {
+      this.head = this.tail = newNode;
+    } else {
+      this.tail.next = this.tail = newNode;
+    }
+
+    this.size += 1;
+  }
+
+  dequeue() {
+    if (this.head === null) return null;
+
+    const value = this.head.value;
+
+    this.head = this.head.next;
+    this.size -= 1;
+
+    return value;
+  }
+
+  peek() {
+    if (this.head === null) return null;
+
+    return this.head.value;
+  }
+}
+
+function solution(bridge_length, weight, truck_weights) {
+  let answer = 0;
+
+  const bridgeQueue = new Queue();
+  let currentWeight = 0;
+
+  const truckQueue = new Queue();
+  for (const truck of truck_weights) {
+    truckQueue.enqueue(truck);
+  }
+
+  // 다리가 모두 찼다면 다리에서 한칸 뽑고, 그 다음 한칸 넣기
+  while (truckQueue.size > 0) {
+    // 다리가 꽉찼다면 dequeue
+    if (bridgeQueue.size === bridge_length) {
+      const passed = bridgeQueue.dequeue();
+      currentWeight -= passed;
+    }
+
+    // enqueue가 가능하면 enqueue, currentWeight++
+    if (currentWeight + truckQueue.peek() <= weight) {
+      const newTruck = truckQueue.dequeue();
+      bridgeQueue.enqueue(newTruck);
+      currentWeight += newTruck;
+    } else {
+      // enqueue가 불가능하면 0을 enqueue
+      bridgeQueue.enqueue(0);
+    }
+
+    answer += 1;
+  }
+
+  return answer + bridge_length;
+}
+
+/**
+ * 26.04.03
+ * 모든 트럭이 다리를 건너려면 최소 몇 초?
+ * 최대 bridge_lennth 대 만큼
+ * 최대 weight 무게 만큼
+ * (이때 다리에 완전히 오르지 않은 트럭의 무게는 무시)
+ */
+
+class Node {
+  constructor(weight) {
+    this.weight = weight
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+  }
+
+  enqueue(weight) {
+    const newNode = new Node(weight);
+
+    if (!this.head) {
+      this.head = this.tail = newNode;
+    } else {
+      this.tail.next = newNode;
+      this.tail = newNode
+    }
+    this.size += 1
+  }
+
+  dequeue() {
+    const weight = this.head.weight
+
+    this.head = this.head.next;
+    this.size -= 1
+
+    return weight
+  }
+
+  peek() {
+    return this.head ? this.head.weight : null;
+  }
+}
+
+function solution(bridge_length, weight, truck_weights) {
+  const truckQueue = new Queue();
+  const bridgeQueue = new Queue();
+
+  for (const truck of truck_weights) {
+    truckQueue.enqueue(truck);
+  }
+
+  let time = 0;
+  let totalWeight = 0;
+
+  // 다리가 꽉 찼다면 bridge dequeue
+  // 먼저 다리에 올릴 수 있는지 판단.
+  // 올릴 수 있다: truck dequeue, bridge enqueue(truck)
+  // 마지막 truck을 올렸다면 그자리에서 time += bridge_length
+  // 올릴 수 없다: bridge enqueue(0)
+
+  while (bridgeQueue.size >= 0 && truckQueue.size >= 0) {
+    time += 1
+
+
+    if (bridgeQueue.size === bridge_length) {
+      const truck = bridgeQueue.dequeue();
+      totalWeight -= truck
+    }
+
+    if (totalWeight + truckQueue.peek() > weight) {
+      bridgeQueue.enqueue(0)
+    } else {
+      const truck = truckQueue.dequeue();
+      bridgeQueue.enqueue(truck)
+      totalWeight += truck
+
+      if (!truckQueue.peek()) {
+        time += bridge_length
+        break;
+      }
+    }
+  }
+
+  return time
+};
