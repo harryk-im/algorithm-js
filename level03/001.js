@@ -88,3 +88,59 @@ function solution(genres, plays) {
     .flat()
     .map((item) => item.idx);
 }
+
+/**
+ * 26.04.03
+ * 장르 별 가장 많이 재생된 노래 2개 씩 모아 앨범 출시
+ * 노래는 고유 번호로 구분
+ * 1. 속한 노래가 많이 재생된 장르를 먼저 수록
+ * 2. 장르 내에서 많이 재생된 노래를 먼저 수록
+ * 3. 재생 횟수가 같다면 고유 번호가 낮은 노래를 먼저 수록
+ * 해시 테이블을 만들어야?
+ */
+
+function solution(genres, plays) {
+  // 해시 테이블 작성 O(n)
+  const answer = []
+  const musicTable = {};
+  const totalArray = [];
+  for (let id = 0; id < genres.length; id += 1) {
+    const value = { id: id, plays: plays[id] }
+
+    if (!musicTable[genres[id]]) {
+      musicTable[genres[id]] = [value]
+    } else {
+      musicTable[genres[id]] = [...musicTable[genres[id]], value]
+    }
+  };
+
+  // 장르별 정렬 O(nlogn)
+  for (const key in musicTable) {
+    musicTable[key].sort((a, b) => b.plays - a.plays)
+  }
+
+  // 장르별 토탈 계산 O(n)
+  for (const key in musicTable) {
+    let total = 0;
+
+    for (const music of musicTable[key]) {
+      total += music.plays
+    }
+
+    const value = { genre: key, total: total }
+    totalArray.push(value)
+  }
+
+  // 장르별 토탈 정렬 O(nlogn)
+  totalArray.sort((a, b) => b.total - a.total)
+
+  // 앨범에 집어 넣기 O(n)
+  for (const item of totalArray) {
+    answer.push(musicTable[item.genre][0].id)
+    if (musicTable[item.genre][1]) {
+      answer.push(musicTable[item.genre][1].id)
+    }
+  }
+
+  return answer
+}
