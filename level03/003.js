@@ -214,3 +214,191 @@ function solution(n, computers) {
 
   return networks;
 }
+
+// 복습
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.head = null
+    this.tail = null
+    this.size = 0
+  }
+
+  enqueue(value) {
+    const newNode = new Node(value);
+
+    if (this.head === null) {
+      this.head = this.tail = newNode
+    } else {
+      this.tail.next = newNode;
+      this.tail = newNode;
+    }
+
+    this.size += 1
+  }
+
+  dequeue() {
+    if (this.head === null) return null;
+
+    const value = this.head.value;
+
+    this.head = this.head.next;
+    this.size -= 1;
+
+    return value;
+  }
+
+  peek() {
+    if (this.head === null) return null;
+
+    return this.head.value;
+  }
+}
+
+function solution(n, computers) {
+  const networkQueue = new Queue();
+  const isVisited = new Array(n).fill(false);
+  let answer = 0;
+
+  const bfs = (node) => {
+    isVisited[node] = true;
+
+    for (let idx = 0; idx < computers.length; idx += 1) {
+      if (idx === node) continue;
+      if (isVisited[idx]) continue;
+      if (computers[node][idx] === 0) continue;
+
+      networkQueue.enqueue(idx);
+    }
+
+    while (networkQueue.size > 0) {
+      const nextNode = networkQueue.dequeue();
+      isVisited[nextNode] = true;
+
+      for (let idx = 0; idx < computers.length; idx += 1) {
+        if (idx === node) continue;
+        if (isVisited[idx]) continue;
+        if (computers[nextNode][idx] === 0) continue;
+
+        networkQueue.enqueue(idx);
+      }
+    }
+
+    answer += 1;
+  }
+
+  for (let node = 0; node < computers.length; node += 1) {
+    if (isVisited[node]) continue;
+
+    bfs(node);
+  }
+
+  return answer;
+};
+
+/**
+ * 26.04.03
+ * 아직 Queue를 구현하는것에 익숙치 않은 것 같기도.
+ */
+function solution(n, computers) {
+  let answer = 0;
+  const isVisited = Array(n).fill(false)
+
+  for (let node = 0; node < n; node += 1) {
+    if (isVisited[node]) continue;
+
+    const queue = [node];
+    while (queue.length > 0) {
+      const currentNode = queue.shift();
+      isVisited[currentNode] = true;
+
+      for (let idx = 0; idx < n; idx += 1) {
+        if (idx === currentNode) continue;
+        if (isVisited[idx]) continue;
+        if (computers[currentNode][idx] === 0) continue;
+
+        queue.push(idx);
+      }
+    }
+    answer += 1
+  }
+
+  return answer;
+};
+
+class Node {
+  constructor(newValue) {
+    this.value = newValue;
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+  }
+
+  enqueue(value) {
+    const newNode = new Node(value)
+
+    if (!this.head) {
+      this.head = this.tail = newNode
+    } else {
+      this.tail.next = newNode
+      this.tail = newNode
+    }
+    this.size += 1
+  }
+
+  dequeue() {
+    if (!this.head) return null;
+    const value = this.head.value;
+
+    this.head = this.head.next
+    this.size -= 1
+
+    return value
+  }
+
+  peek() {
+    return this.head ? this.head.value : null;
+  }
+}
+
+
+function solution(n, computers) {
+  let answer = 0;
+  const isVisited = Array(n).fill(false)
+
+  for (let node = 0; node < n; node += 1) {
+    if (isVisited[node]) continue;
+
+    const queue = new Queue()
+    queue.enqueue(node);
+
+    while (queue.size > 0) {
+      const currentNode = queue.dequeue();
+      isVisited[currentNode] = true;
+
+      for (let idx = 0; idx < n; idx += 1) {
+        if (idx === currentNode) continue;
+        if (isVisited[idx]) continue;
+        if (computers[currentNode][idx] === 0) continue;
+
+        queue.enqueue(idx);
+      }
+    }
+    answer += 1
+  }
+
+  return answer;
+};
+
