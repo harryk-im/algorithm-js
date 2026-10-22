@@ -402,3 +402,88 @@ function solution(n, computers) {
   return answer;
 };
 
+/**
+ * 26.10.22 복습
+ * Queue 구현, BFS(재귀)로 풀이
+ */
+class Node {
+    constructor(value) {
+        this.value = value;
+        this.next = null;
+    }
+}
+
+class Queue {
+    constructor() {
+        this.head = null;
+        this.tail = null;
+        this.size = 0;
+    }
+
+    enqueue(newValue) {
+        const newNode = new Node(newValue);
+
+        if (this.head === null) {
+            this.head = this.tail = newNode;
+        } else {
+            this.tail.next = newNode;
+            this.tail = newNode;
+        }
+
+        this.size += 1;
+    }
+
+    dequeue() {
+        if (this.head === null) return null;
+
+        const value = this.head.value;
+        this.head = this.head.next
+        this.size -= 1;
+
+        return value;
+    }
+}
+
+function solution(n, computers) {
+    let answer = 0;
+    const isVisited = [];
+    for (let i = 0; i < n; i += 1) {
+        isVisited[i] = false;
+    }
+
+    const queue = new Queue();
+
+    const bfs = (node) => {
+        isVisited[node] = true;
+
+        for (let idx = 0; idx < n; idx += 1) {
+            if (idx === node) continue;
+            if (isVisited[idx]) continue;
+            if (computers[node][idx] === 0) continue;
+
+            queue.enqueue(idx);
+        }
+
+        while (queue.size > 0) {
+            const current = queue.dequeue();
+            isVisited[current] = true;
+
+            for (let idx = 0; idx < n; idx += 1) {
+                if (idx === current) continue;
+                if (isVisited[idx]) continue;
+                if (computers[current][idx] === 0) continue;
+
+                queue.enqueue(idx);
+            }
+        }
+
+        answer += 1;
+    }
+
+    for (let idx = 0; idx < n; idx += 1) {
+        if (isVisited[idx]) continue;
+        bfs(idx);
+    }
+
+    return answer;
+}
