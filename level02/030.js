@@ -85,7 +85,7 @@ function solution(numbers, target) {
       return;
     }
     if (idx > numbers.length) {
-      console.error("numbers의 index를 초과했습니다");
+      console.error('numbers의 index를 초과했습니다');
       return;
     }
 
@@ -148,11 +148,59 @@ function solution(numbers, target) {
 
     const node = numbers[idx];
 
-    dfs(acc + node, idx + 1)
-    dfs(acc - node, idx + 1)
-  }
+    dfs(acc + node, idx + 1);
+    dfs(acc - node, idx + 1);
+  };
 
-  dfs(0, 0)
+  dfs(0, 0);
 
-  return answer
+  return answer;
+}
+
+/**
+ * 타겟 넘버
+ * https://school.programmers.co.kr/learn/courses/30/lessons/43165
+ *
+ * DFS, 재귀 함수, 개선된 풀이 까지
+ */
+function solution(numbers, target) {
+  let answer = 0;
+
+  const dfs = (sum, idx) => {
+    const a = sum + numbers[idx];
+    const b = sum + numbers[idx] * -1;
+
+    if (idx === numbers.length - 1) {
+      if (a === target) answer += 1;
+      if (b === target) answer += 1;
+
+      return;
+    }
+
+    dfs(a, idx + 1);
+    dfs(b, idx + 1);
+  };
+
+  dfs(numbers[0], 1);
+  dfs(numbers[0] * -1, 1);
+
+  return answer;
+}
+
+function solution(numbers, target) {
+  let answer = 0;
+
+  const dfs = (sum, idx) => {
+    if (idx === numbers.length) {
+      if (sum === target) answer += 1;
+      return;
+    }
+
+    dfs(sum + numbers[idx], idx + 1);
+    dfs(sum + numbers[idx] * -1, idx + 1);
+  };
+
+  dfs(0, 0);
+
+  return answer;
 }
