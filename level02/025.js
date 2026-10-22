@@ -101,3 +101,102 @@ function solution(priorities, location) {
 
   return completedCount;
 }
+
+/**
+ * 프로세스
+ * https://school.programmers.co.kr/learn/courses/30/lessons/42587
+ *
+ * 우선순위 큐
+ * 대기중인 프로세스 중 우선순위가 더 높은 프로세스가 있다면 방금 꺼낸 프로세스를 다시 큐에 넣는다.
+ * dequeue -> queue 순회 -> 높은 프로세스가 있는지 검증 -> 없다면 마무리
+ * -> 있다면 enqueue 하고 반복
+ */
+class Node {
+  constructor(value, isTarget) {
+    this.value = value;
+    this.isTarget = isTarget;
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+  }
+
+  enqueue(newValue, isTarget) {
+    const newNode = new Node(newValue, isTarget);
+
+    if (this.head === null) {
+      this.head = this.tail = newNode;
+    } else {
+      this.tail.next = newNode;
+      this.tail = newNode;
+    }
+
+    this.size += 1;
+  }
+
+  dequeue() {
+    if (this.size === 0) return null;
+
+    const node = this.head;
+    this.head = this.head.next;
+    this.size -= 1;
+
+    return node;
+  }
+
+  peek() {
+    if (this.size === 0) return null;
+    return this.head
+  }
+
+  hasHigherPriority(priority) {
+    let current = this.head;
+
+    while (current !== null) {
+      if (current.value > priority) {
+        return true;
+      }
+
+      current = current.next;
+    }
+
+    return false;
+  }
+}
+
+function solution(priorities, location) {
+  let answer = 0;
+
+  const queue = new Queue();
+  for (let idx = 0; idx < priorities.length; idx += 1) {
+    if (idx === location) {
+      queue.enqueue(priorities[idx], true);
+    } else {
+      queue.enqueue(priorities[idx], false);
+    }
+  }
+
+  // node.value node.target
+
+  while (queue.size > 0) {
+    const node = queue.dequeue();
+    if (queue.hasHigherPriority(node.value)) {
+      queue.enqueue(node.value, node.isTarget)
+      continue;
+    }
+
+    answer += 1;
+
+    if (node.isTarget) {
+      return answer;
+    }
+  }
+
+
+  return answer;
+}
