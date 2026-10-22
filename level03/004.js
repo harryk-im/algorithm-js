@@ -224,8 +224,55 @@ function solution(begin, target, words) {
 
   return minChangeCount;
 }
+
 /**
- * 너무 풀이 속도가 느린 것 같다
- * 풀이 속도도 느리고 DFS, BFS유형 이해도가 많이 죽은듯..
- * 더 노력하자!
+ * 단어 변환
+ * https://school.programmers.co.kr/learn/courses/30/lessons/43163
+ * 한 번에 한 개의 알파벳만 가능
+ * words에 있는 단어로만 가능
+ * 당연하게 바꿨던 단어로는 변경 불가능
+ *
+ * 변환 가능한지 유틸 함수 작성, DFS 풀이, 재귀 활용
  */
+function solution(begin, target, words) {
+  const answer = [];
+  const wordLength = words[0].length;
+  const isVisited = {};
+  for (let idx = 0; idx < words.length; idx += 1) {
+    isVisited[words[idx]] = false;
+  }
+
+  const isChangeable = (cur, tar) => {
+    let count = 0;
+
+    for (let idx = 0; idx < wordLength; idx += 1) {
+      if (cur[idx] !== tar[idx]) count += 1;
+      if (count > 1) return false;
+    }
+
+    return count === 1;
+  };
+
+  const dfs = (cur, count) => {
+    if (isVisited[cur]) return;
+    isVisited[cur] = true;
+
+    for (let idx = 0; idx < words.length; idx += 1) {
+      const tar = words[idx];
+
+      if (isVisited[tar]) continue;
+      if (!isChangeable(cur, tar)) continue;
+      if (tar === target) {
+        answer.push(count + 1);
+        return;
+      }
+
+      dfs(tar, count + 1);
+    }
+  };
+
+  dfs(begin, 0);
+  answer.sort((a, b) => a - b);
+
+  return answer.length ? answer[0] : 0;
+}
