@@ -276,3 +276,49 @@ function solution(begin, target, words) {
 
   return answer.length ? answer[0] : 0;
 }
+
+/**
+ * 카운트로 길어지는 것은 차단한다.
+ * 백트랙킹을 활용한다.
+ * Set 객체를 활용한다.
+ */
+
+function solution(begin, target, words) {
+  if (words.includes(target) === -1) return 0;
+
+  let answer = Infinity;
+  const isVisited = new Set([begin]);
+
+  const isChangeable = (cur, next) => {
+    let count = 0;
+
+    for (let idx = 0; idx < cur.length; idx += 1) {
+      if (cur[idx] !== next[idx]) count += 1;
+      if (count > 1) return false;
+    }
+
+    return count === 1;
+  };
+
+  const dfs = (cur, count) => {
+    if (cur === target) {
+      answer = Math.min(answer, count);
+      return;
+    }
+
+    if (count >= answer) return;
+
+    for (const next of words) {
+      if (isVisited.has(next)) continue;
+      if (!isChangeable(cur, next)) continue;
+
+      isVisited.add(next);
+      dfs(next, count + 1);
+      isVisited.delete(next);
+    }
+  };
+
+  dfs(begin, 0);
+
+  return answer === Infinity ? 0 : answer;
+}
