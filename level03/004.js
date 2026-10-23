@@ -322,3 +322,89 @@ function solution(begin, target, words) {
 
   return answer === Infinity ? 0 : answer;
 }
+
+/**
+ * BFS 풀이
+ */
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.size = 0;
+  }
+
+  enqueue(newValue) {
+    const newNode = new Node(newValue);
+
+    if (this.head === null) {
+      this.head = this.tail = newNode;
+    } else {
+      this.tail.next = newNode;
+      this.tail = newNode;
+    }
+
+    this.size += 1;
+  }
+
+  dequeue() {
+    if (this.head === null) return;
+
+    const value = this.head.value;
+    this.head = this.head.next;
+
+    this.size -= 1;
+
+    return value;
+  }
+
+  size() {
+    return this.size;
+  }
+}
+
+function solution(begin, target, words) {
+  if (!words.includes(target)) return 0;
+
+  const queue = new Queue();
+  const visited = {};
+  for (const word of words) {
+    visited[word] = 0;
+  }
+
+  const isChangeable = (cur, next) => {
+    let count = 0;
+
+    for (let idx = 0; idx < words[0].length; idx += 1) {
+      if (count > 1) return false;
+      if (cur[idx] !== next[idx]) {
+        count += 1;
+      }
+    }
+
+    return count === 1;
+  };
+
+  queue.enqueue(begin);
+  visited[begin] = 1;
+  while (queue.size > 0) {
+    const cur = queue.dequeue();
+    if (cur === target) return visited[target] - 1;
+
+    for (const next of words) {
+      if (visited[next]) continue;
+      if (!isChangeable(cur, next)) continue;
+
+      visited[next] = visited[cur] + 1;
+      queue.enqueue(next);
+    }
+  }
+
+  return visited[target] - 1;
+}
