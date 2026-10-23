@@ -20,11 +20,11 @@ function solution(k, dungeons) {
     if (k >= dungeons[i][0]) {
       k -= dungeons[i][1];
       result++;
-      console.log("if문 진입", result, k);
-    } 
+      console.log('if문 진입', result, k);
+    }
   }
 
-  console.log("for문 탈출", result, k);
+  console.log('for문 탈출', result, k);
 
   return result;
 }
@@ -65,8 +65,8 @@ function solution(k, dungeons) {
         if (current[0] <= state) {
           state -= current[1];
           count++;
-          
-          if(dungeons.length > 0) {
+
+          if (dungeons.length > 0) {
             const next = Array.from(dungeons);
             next.splice(idx, 1);
             loop(next);
@@ -83,11 +83,11 @@ function solution(k, dungeons) {
 
 /**
  * 많이 부족함을 느낀다.
- * 
+ *
  * 진짜 어떻게 공부를 해야할까 방향성 제대로 잡아야할 때가 온것 같다.
  * 무작정 기능구현 하다보면 실력이 늘겠지 하는 생각이였지만
  * 벽을 느끼는 중이다.
- * 
+ *
  * 내 스스로 돌파구를 찾을 수 있길 바란다.
  */
 
@@ -98,3 +98,50 @@ function solution(k, dungeons) {
  * 재귀함수(loop)
  * 완전 탐색
  */
+// 4년전에 쩔쩔매면서 풀었었네
+// 언제쯤 취업할 수 있을까
+
+/**
+ * 피로도
+ * https://school.programmers.co.kr/learn/courses/30/lessons/87946
+ * DFS와 백트래킹을 활용한 풀이
+ */
+function solution(k, dungeons) {
+  let answer = 0;
+  const visited = Array(dungeons.length).fill(false);
+
+  const canVisit = (cur) => {
+    let count = 0;
+    for (let idx = 0; idx < dungeons.length; idx += 1) {
+      if (cur < dungeons[idx][0]) {
+        count += 1;
+      }
+    }
+
+    return count === dungeons.length ? false : true;
+  };
+
+  const dfs = (cur, count) => {
+    if (count === dungeons.length) {
+      answer = count;
+      return;
+    }
+    if (!canVisit(cur)) {
+      if (count > answer) answer = count;
+      return;
+    }
+
+    for (let idx = 0; idx < dungeons.length; idx += 1) {
+      if (cur < dungeons[idx][0]) continue;
+      if (visited[idx]) continue;
+
+      visited[idx] = true;
+      dfs(cur - dungeons[idx][1], count + 1);
+      visited[idx] = false;
+    }
+  };
+
+  dfs(k, 0);
+
+  return answer;
+}
