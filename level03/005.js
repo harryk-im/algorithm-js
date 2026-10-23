@@ -34,7 +34,7 @@ function solution(tickets) {
   }
 
   const dfs = () => {
-    const stack = ["ICN"];
+    const stack = ['ICN'];
 
     while (stack.length > 0) {
       const currentNode = stack.pop();
@@ -70,7 +70,7 @@ function solution(tickets) {
   }
 
   const answer = [];
-  const stack = ["ICN"];
+  const stack = ['ICN'];
 
   while (stack.length > 0) {
     const currentNode = stack[stack.length - 1];
@@ -112,7 +112,7 @@ function solution(tickets) {
   }
 
   const answer = [];
-  const stack = ["ICN"];
+  const stack = ['ICN'];
 
   while (stack.length > 0) {
     const currentNode = stack[stack.length - 1];
@@ -127,4 +127,40 @@ function solution(tickets) {
   }
 
   return answer.reverse();
+}
+
+function solution(tickets) {
+  const sortedTickets = [...tickets].sort((a, b) => a[1].localeCompare(b[1]));
+  const visited = Array(tickets.length).fill(false);
+  const route = ['ICN'];
+
+  let answer = null;
+
+  const dfs = (cur, count) => {
+    if (count === sortedTickets.length) {
+      answer = [...route];
+      return;
+    }
+
+    for (let idx = 0; idx < sortedTickets.length; idx += 1) {
+      const [dep, des] = sortedTickets[idx];
+
+      if (visited[idx]) continue;
+      if (cur !== dep) continue;
+
+      visited[idx] = true;
+      route.push(des);
+
+      dfs(des, count + 1);
+
+      route.pop();
+      visited[idx] = false;
+
+      if (answer !== null) return;
+    }
+  };
+
+  dfs('ICN', 0);
+
+  return answer;
 }
