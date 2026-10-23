@@ -46,3 +46,39 @@ function solution(word) {
 
   return dict.indexOf(word) + 1;
 }
+
+/**
+ * DFS, 백트래킹 활용
+ */
+function solution(word) {
+  const char = ['A', 'E', 'I', 'O', 'U'];
+  const stack = [];
+
+  let count = 0;
+  let answer = 0;
+
+  const dfs = () => {
+    if (stack.length > 0) {
+      count += 1;
+
+      if (word.length === stack.length && stack.join('') === word) {
+        answer = count;
+        return;
+      }
+    }
+
+    if (stack.length === 5) return;
+
+    for (let idx = 0; idx < char.length; idx += 1) {
+      if (answer !== 0) return;
+
+      stack.push(char[idx]);
+      dfs();
+      stack.pop();
+    }
+  };
+
+  dfs();
+
+  return answer;
+}
